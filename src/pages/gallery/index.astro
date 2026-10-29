@@ -1,0 +1,35 @@
+---
+import Base from "../../layouts/Base.astro";
+import { formatDate, getAlbums } from "../../lib/site";
+
+const albums = await getAlbums();
+---
+<Base title="Gallery" description="Photo albums from programme activities and events.">
+  <section class="hero">
+    <div class="container">
+      <h1>Gallery</h1>
+      <p>Photos from programme activities and events.</p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container">
+      {albums.length ? (
+        <ul class="grid">
+          {albums.map((a) => {
+            const cover = a.data.cover ?? a.data.photos[0];
+            return (
+              <li class="card">
+                {cover && <img src={cover} alt="" loading="lazy">}
+                <div class="body">
+                  <p class="meta">{formatDate(a.data.date)} · {a.data.photos.length} photos</p>
+                  <h3><a href={`/gallery/${a.id}/`}>{a.data.title}</a></h3>
+                  {a.data.description && <p>{a.data.description}</p>}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      ) : <p class="empty">No albums yet.</p>}
+    </div>
+  </section>
+</Base>

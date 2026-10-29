@@ -1,0 +1,144 @@
+# Admin forms for Pages CMS (https://app.pagescms.org).
+# Editors sign in with GitHub, open this repository, and edit content here.
+media:
+  - name: images
+    label: Photos
+    input: public/media/images
+    output: /media/images
+    categories: [image]
+  - name: pdfs
+    label: Guideline PDFs
+    input: public/downloads/guidelines
+    output: /downloads/guidelines
+    extensions: [pdf]
+
+content:
+  - name: guidelines
+    label: Guidelines
+    type: collection
+    path: src/content/guidelines
+    filename: "{fields.title}-{fields.edition}.md"
+    view:
+      fields: [title, edition, published]
+      primary: title
+      default: { sort: published, order: desc }
+    fields:
+      - { name: title, label: Title, type: string, required: true, description: "e.g. National Cancer Treatment Guidelines" }
+      - { name: edition, label: Edition / year, type: string, description: "e.g. 2026" }
+      - name: file
+        label: PDF file
+        type: file
+        required: true
+        description: Upload the PDF. Page count, file size and cover image are added automatically.
+        options: { media: pdfs, extensions: [pdf] }
+      - { name: published, label: Publication date, type: date, required: true }
+      - { name: category, label: Category, type: string, description: "e.g. Cancer treatment, Screening, Palliative care" }
+      - { name: publisher, label: Publisher, type: string, default: "Ministry of Health, Republic of Kenya" }
+      - { name: summary, label: Short summary, type: text, description: One or two sentences shown on the guideline card. }
+      - name: cover
+        label: Cover image (optional)
+        type: image
+        description: Leave empty to use the first page of the PDF.
+        options: { media: images }
+      - { name: body, label: More details (optional), type: rich-text }
+
+  - name: posts
+    label: News
+    type: collection
+    path: src/content/posts
+    filename: "{year}-{month}-{day}-{primary}.md"
+    view:
+      fields: [title, date, draft]
+      primary: title
+      default: { sort: date, order: desc }
+    fields:
+      - { name: title, label: Title, type: string, required: true }
+      - { name: date, label: Date, type: date, required: true }
+      - { name: summary, label: Short summary, type: text, description: Shown on the news list and in link previews. }
+      - name: cover
+        label: Cover photo
+        type: image
+        options: { media: images }
+      - { name: draft, label: Draft (hide from site), type: boolean, default: false }
+      - { name: body, label: Article, type: rich-text }
+
+  - name: events
+    label: Events
+    type: collection
+    path: src/content/events
+    filename: "{year}-{month}-{day}-{primary}.md"
+    view:
+      fields: [title, start, location]
+      primary: title
+      default: { sort: start, order: desc }
+    fields:
+      - { name: title, label: Title, type: string, required: true }
+      - { name: start, label: Starts, type: date, required: true, options: { time: true }, description: Kenya time. }
+      - { name: end, label: Ends (optional), type: date, options: { time: true } }
+      - { name: location, label: Venue / location, type: string }
+      - { name: summary, label: Short summary, type: text }
+      - name: cover
+        label: Cover photo
+        type: image
+        options: { media: images }
+      - { name: registration, label: Registration link (optional), type: string, description: "Full web address, e.g. https://forms.gle/..." }
+      - { name: body, label: Details, type: rich-text }
+      - name: photos
+        label: Photos from the event
+        type: image
+        description: Add these after the event; they appear at the bottom of the event page.
+        options: { media: images, multiple: true }
+
+  - name: albums
+    label: Gallery albums
+    type: collection
+    path: src/content/albums
+    filename: "{year}-{month}-{day}-{primary}.md"
+    view:
+      fields: [title, date]
+      primary: title
+      default: { sort: date, order: desc }
+    fields:
+      - { name: title, label: Album title, type: string, required: true }
+      - { name: date, label: Date, type: date, required: true }
+      - { name: description, label: Description, type: text }
+      - name: cover
+        label: Cover photo (optional)
+        type: image
+        description: Leave empty to use the first photo.
+        options: { media: images }
+      - name: photos
+        label: Photos
+        type: image
+        required: true
+        options: { media: images, multiple: true }
+      - { name: body, label: Notes (optional), type: rich-text }
+
+  - name: pages
+    label: Pages
+    type: collection
+    path: src/content/pages
+    filename: "{primary}.md"
+    view:
+      fields: [title, showInMenu, menuOrder]
+      primary: title
+    fields:
+      - { name: title, label: Title, type: string, required: true, description: "The page address comes from the title, e.g. 'Contact us' becomes /contact-us/." }
+      - { name: description, label: Short description, type: text, description: Used by search engines and link previews. }
+      - { name: showInMenu, label: Show in top menu, type: boolean, default: false }
+      - { name: menuOrder, label: Menu position, type: number, default: 100, description: Lower numbers appear first. }
+      - { name: body, label: Content, type: rich-text }
+
+  - name: settings
+    label: Site settings
+    type: file
+    path: src/data/settings.json
+    fields:
+      - { name: siteName, label: Site name, type: string, required: true }
+      - { name: tagline, label: Tagline (under the site name), type: string }
+      - { name: heroTitle, label: Home page headline, type: string }
+      - { name: heroText, label: Home page introduction, type: text }
+      - { name: contactEmail, label: Contact email, type: string }
+      - { name: phone, label: Phone, type: string }
+      - { name: address, label: Address, type: string }
+      - { name: footerText, label: Footer text, type: string }

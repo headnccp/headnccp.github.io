@@ -1,0 +1,59 @@
+---
+import "../styles/global.css";
+import { getMenu, settings } from "../lib/site";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+}
+const { title, description = settings.heroText, image } = Astro.props;
+const fullTitle = title ? `${title} | ${settings.siteName}` : settings.siteName;
+const menu = await getMenu();
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{fullTitle}</title>
+  <meta name="description" content={description}>
+  <meta property="og:title" content={fullTitle}>
+  <meta property="og:description" content={description}>
+  {image && <meta property="og:image" content={new URL(image, Astro.site)}>}
+  <link rel="canonical" href={new URL(path, Astro.site)}>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <a class="brand" href="/">
+        <strong>{settings.siteName}</strong>
+        <span>{settings.tagline}</span>
+      </a>
+      <nav aria-label="Main">
+        <ul class="nav">
+          {menu.map((m) => (
+            <li><a href={m.href} aria-current={isCurrent(m.href) ? "page" : undefined}>{m.label}</a></li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <slot />
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>{settings.footerText}</p>
+      <p>
+        {[settings.address, settings.phone].filter(Boolean).join(" · ")}
+        {settings.contactEmail && <> · <a href={`mailto:${settings.contactEmail}`}>{settings.contactEmail}</a></>}
+      </p>
+    </div>
+  </footer>
+</body>
+</html>

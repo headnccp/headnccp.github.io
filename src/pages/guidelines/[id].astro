@@ -1,0 +1,37 @@
+---
+import { render } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import DownloadIcon from "../../components/DownloadIcon.astro";
+import { formatDate, formatSize, getGuidelines, type Guideline } from "../../lib/site";
+
+export async function getStaticPaths() {
+  return (await getGuidelines()).map((g) => ({ params: { id: g.id }, props: { g } }));
+}
+const { g } = Astro.props as { g: Guideline };
+const { Content } = await render(g);
+const name = `${g.data.title} ${g.data.edition ?? ""}`.trim();
+---
+<Base title={name} description={g.data.summary} image={g.meta.cover}>
+  <div class="container">
+    <div class="detail">
+      {g.meta.cover && <img src={g.meta.cover} alt={`Cover of ${name}`} width="220" height="311">}
+      <div>
+        <p class="breadcrumb"><a href="/guidelines/">Guidelines</a></p>
+        {g.data.category && <span class="tag">{g.data.category}</span>}
+        <h1 class="detail-title">{name}</h1>
+        {g.data.summary && <p>{g.data.summary}</p>}
+        <ul class="facts">
+          {g.data.publisher && <li><strong>Publisher</strong> {g.data.publisher}</li>}
+          <li><strong>Published</strong> {formatDate(g.data.published)}</li>
+          {g.meta.pages && <li><strong>Pages</strong> {g.meta.pages}</li>}
+          <li><strong>Format</strong> PDF{g.meta.sizeBytes && `, ${formatSize(g.meta.sizeBytes)}`}</li>
+        </ul>
+        <div class="actions">
+          <a class="btn" href={g.data.file} download><DownloadIcon />Download PDF</a>
+          <a class="btn btn-outline" href={g.data.file} target="_blank" rel="noopener">Open in browser</a>
+        </div>
+        <div class="prose"><Content /></div>
+      </div>
+    </div>
+  </div>
+</Base>

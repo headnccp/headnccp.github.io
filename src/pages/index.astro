@@ -1,0 +1,53 @@
+---
+import Base from "../layouts/Base.astro";
+import GuidelineCard from "../components/GuidelineCard.astro";
+import PostCard from "../components/PostCard.astro";
+import EventCard from "../components/EventCard.astro";
+import { getEvents, getGuidelines, getPosts, settings } from "../lib/site";
+
+const guidelines = (await getGuidelines()).slice(0, 3);
+const posts = (await getPosts()).slice(0, 3);
+const { upcoming } = await getEvents();
+---
+<Base>
+  <section class="hero">
+    <div class="container">
+      <h1>{settings.heroTitle}</h1>
+      <p>{settings.heroText}</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>Latest guidelines</h2>
+        <a href="/guidelines/">All guidelines &rarr;</a>
+      </div>
+      <ul class="grid">{guidelines.map((g) => <GuidelineCard g={g} />)}</ul>
+    </div>
+  </section>
+
+  {upcoming.length > 0 && (
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>Upcoming events</h2>
+          <a href="/events/">All events &rarr;</a>
+        </div>
+        <ul class="grid">{upcoming.slice(0, 3).map((e) => <EventCard event={e} />)}</ul>
+      </div>
+    </section>
+  )}
+
+  {posts.length > 0 && (
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <h2>News</h2>
+          <a href="/news/">All news &rarr;</a>
+        </div>
+        <ul class="grid">{posts.map((p) => <PostCard post={p} />)}</ul>
+      </div>
+    </section>
+  )}
+</Base>

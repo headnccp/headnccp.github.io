@@ -1,0 +1,15 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { formatDateTime } from "../lib/site";
+
+const { event } = Astro.props as { event: CollectionEntry<"events"> };
+---
+<li class="card">
+  {event.data.cover && <img src={event.data.cover} alt="" loading="lazy">}
+  <div class="body">
+    <p class="date-badge"><time datetime={event.data.start.toISOString()}>{formatDateTime(event.data.start)}</time></p>
+    <h3><a href={`/events/${event.id}/`}>{event.data.title}</a></h3>
+    {event.data.location && <p class="meta">{event.data.location}</p>}
+    {event.data.summary && <p>{event.data.summary}</p>}
+  </div>
+</li>

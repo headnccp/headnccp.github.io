@@ -1,0 +1,22 @@
+---
+import Base from "../../layouts/Base.astro";
+import PostCard from "../../components/PostCard.astro";
+import { getPosts } from "../../lib/site";
+
+const posts = await getPosts();
+---
+<Base title="News" description="News and updates from the National Cancer Control Programme.">
+  <section class="hero">
+    <div class="container">
+      <h1>News</h1>
+      <p>Updates and announcements from the programme.</p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container">
+      {posts.length
+        ? <ul class="grid">{posts.map((p) => <PostCard post={p} />)}</ul>
+        : <p class="empty">No news yet.</p>}
+    </div>
+  </section>
+</Base>

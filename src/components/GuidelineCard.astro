@@ -1,0 +1,20 @@
+---
+import { formatSize, type Guideline } from "../lib/site";
+import DownloadIcon from "./DownloadIcon.astro";
+
+const { g } = Astro.props as { g: Guideline };
+const facts = [g.data.edition && "Edition " + g.data.edition, g.meta.pages && g.meta.pages + " pages", "PDF" + (g.meta.sizeBytes ? ", " + formatSize(g.meta.sizeBytes) : "")]
+  .filter(Boolean)
+  .join(" · ");
+---
+<li class="card guideline-card" id={g.id}>
+  {g.meta.cover && <img src={g.meta.cover} alt={`Cover of ${g.data.title}`} loading="lazy" width="110" height="156">}
+  <div class="body">
+    {g.data.category && <span class="tag">{g.data.category}</span>}
+    <h3><a href={`/guidelines/${g.id}/`}>{g.data.title} {g.data.edition}</a></h3>
+    {g.data.publisher && <p class="meta">{g.data.publisher}</p>}
+    {g.data.summary && <p>{g.data.summary}</p>}
+    <p class="meta">{facts}</p>
+    <a class="btn" href={g.data.file} download><DownloadIcon />Download PDF</a>
+  </div>
+</li>

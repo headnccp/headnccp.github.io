@@ -1,0 +1,33 @@
+---
+// Thumbnail grid; clicking a photo opens it full size in a lightbox.
+const { photos, label } = Astro.props as { photos: string[]; label: string };
+---
+{photos.length > 0 && (
+  <div class="photos" data-photo-grid>
+    {photos.map((src, i) => (
+      <button type="button" data-src={src} aria-label={`Open photo ${i + 1} of ${photos.length}`}>
+        <img src={src} alt={`${label}, photo ${i + 1}`} loading="lazy">
+      </button>
+    ))}
+  </div>
+)}
+<dialog class="lightbox" data-lightbox>
+  <form method="dialog"><button aria-label="Close">&times;</button></form>
+  <img alt="">
+</dialog>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>("[data-lightbox]");
+  const big = dialog?.querySelector("img");
+  document.querySelectorAll<HTMLButtonElement>("[data-photo-grid] button").forEach((b) =>
+    b.addEventListener("click", () => {
+      if (!dialog || !big) return;
+      big.src = b.dataset.src!;
+      big.alt = b.querySelector("img")?.alt ?? "";
+      dialog.showModal();
+    }),
+  );
+  dialog?.addEventListener("click", (e) => {
+    if (e.target === dialog) dialog.close();
+  });
+</script>

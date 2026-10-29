@@ -1,0 +1,14 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { formatDate } from "../lib/site";
+
+const { post } = Astro.props as { post: CollectionEntry<"posts"> };
+---
+<li class="card">
+  {post.data.cover && <img src={post.data.cover} alt="" loading="lazy">}
+  <div class="body">
+    <p class="meta"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time></p>
+    <h3><a href={`/news/${post.id}/`}>{post.data.title}</a></h3>
+    {post.data.summary && <p>{post.data.summary}</p>}
+  </div>
+</li>

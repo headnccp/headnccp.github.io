@@ -1,0 +1,24 @@
+---
+import { render, type CollectionEntry } from "astro:content";
+import Base from "../../layouts/Base.astro";
+import PhotoGrid from "../../components/PhotoGrid.astro";
+import { formatDate, getAlbums } from "../../lib/site";
+
+export async function getStaticPaths() {
+  return (await getAlbums()).map((album) => ({ params: { id: album.id }, props: { album } }));
+}
+const { album } = Astro.props as { album: CollectionEntry<"albums"> };
+const { Content } = await render(album);
+---
+<Base title={album.data.title} description={album.data.description} image={album.data.cover ?? album.data.photos[0]}>
+  <article class="container">
+    <header class="article-head">
+      <p class="breadcrumb"><a href="/gallery/">Gallery</a></p>
+      <h1>{album.data.title}</h1>
+      <p class="meta">{formatDate(album.data.date)} · {album.data.photos.length} photos</p>
+      {album.data.description && <p>{album.data.description}</p>}
+    </header>
+    <div class="prose"><Content /></div>
+    <PhotoGrid photos={album.data.photos} label={album.data.title} />
+  </article>
+</Base>

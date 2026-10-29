@@ -1,0 +1,22 @@
+---
+import Base from "../../layouts/Base.astro";
+import GuidelineCard from "../../components/GuidelineCard.astro";
+import { getGuidelines } from "../../lib/site";
+
+const guidelines = await getGuidelines();
+---
+<Base title="Guidelines" description="National cancer guidelines available to download as PDF.">
+  <section class="hero">
+    <div class="container">
+      <h1>Guidelines</h1>
+      <p>Download the current national guidelines as PDF.</p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container">
+      {guidelines.length
+        ? <ul class="grid">{guidelines.map((g) => <GuidelineCard g={g} />)}</ul>
+        : <p class="empty">No guidelines published yet.</p>}
+    </div>
+  </section>
+</Base>
